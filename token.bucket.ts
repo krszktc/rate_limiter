@@ -19,8 +19,6 @@ export class TokenBucket {
       this.tokens = Math.min(this.capacity, this.tokens + tokensToAdd);
       this.lastRefill += tokensToAdd * this.refillInterval;
     }
-
-    console.log(`timePassed: ${timePassed}, tokensToAdd: ${tokensToAdd}, tokens: ${this.tokens}`);
   }
 
   canRequest(dateTime: string): boolean {

@@ -1,14 +1,6 @@
 import { TokenBucket } from "./token.bucket";
+import { assertEq } from "./utils";
 
-
-// for demo purpose don't want to install @types/node
-function assertEq(first: boolean, second: boolean) {
-  if (first === second) {
-    console.log("✅ OK");
-  } else {
-    console.log("⛔ Err");
-  }
-}
 
 const initTime = new Date('2025-06-06T10:00:00Z').getTime();
 const tokenBucket = new TokenBucket(3, 60, initTime); // 1 token / 20s
