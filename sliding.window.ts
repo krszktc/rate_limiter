@@ -1,4 +1,6 @@
-export class SlidingWindow {
+import { RateLimiter } from "./rate.limiter";
+
+export class SlidingWindow implements RateLimiter {
   private readonly requestTimestamps = new Set<number>();
 
   constructor(

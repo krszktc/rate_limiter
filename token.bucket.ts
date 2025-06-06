@@ -1,4 +1,6 @@
-export class TokenBucket {
+import { RateLimiter } from "./rate.limiter";
+
+export class TokenBucket implements RateLimiter {
   private capacity: number;
   private tokens: number;
   private refillInterval: number;
