@@ -54,7 +54,7 @@ function trackAndClean(clientId: string, timeLimit: number) {
       limiterState.state.delete(oldestUserId);
       limiterState.tracker.delete(oldestUserId)
     } else {
-      break // oldest entry not matching to doesn't make sense to check newest
+      break // oldest entry not matching so doesn't make sense to check newest
     }
   }
 }

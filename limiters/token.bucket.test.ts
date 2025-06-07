@@ -31,8 +31,3 @@ strictEqual(tokenBucket.canRequest(Date.parse('2025-06-06T10:04:50Z')), false); 
 
 // if any test fail this will not print
 console.log("All TokenBucket tests completed ✅");
-
-
-
-
-
