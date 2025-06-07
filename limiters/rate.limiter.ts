@@ -21,7 +21,7 @@ export enum LimiterType {
 
 export interface RateLimiter {
   size: number;
-  lastUpdate: number;
+  lastTimestamp: number;
   canRequest(timestamp: number): boolean;
 }
 
@@ -37,7 +37,7 @@ function setLimiterByType(clientId: string): RateLimiter {
     : new TokenBucket(REQUESTS_LIMIT, TIME_WINDOW)
   limiterState.state.set(clientId, limiter);
 
-  return limiter
+  return limiter;
 }
 
 function trackAndClean(clientId: string, timeLimit: number) {
@@ -50,7 +50,7 @@ function trackAndClean(clientId: string, timeLimit: number) {
   for (let i = 0; i < TRACK_ENTRIES_TO_CHECK; i++) {
     const oldestUserId: string = trackerKeys.next().value;
     const rateLimiter = limiterState.state.get(oldestUserId);
-    if (rateLimiter && rateLimiter.lastUpdate < cleanTimeLimit) {
+    if (rateLimiter && rateLimiter.lastTimestamp < cleanTimeLimit) {
       limiterState.state.delete(oldestUserId);
       limiterState.tracker.delete(oldestUserId)
     } else {

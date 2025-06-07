@@ -2,7 +2,7 @@ import { RateLimiter } from "./rate.limiter";
 
 export class SlidingWindow implements RateLimiter {
   private requestTimestamps = new Set<number>();
-  private lastUpdateTimestamp = Date.now();
+  private lastRequestTimestamp = Date.now();
 
   constructor(
     private limit: number,
@@ -27,8 +27,8 @@ export class SlidingWindow implements RateLimiter {
     return this.requestTimestamps.size;
   }
 
-  get lastUpdate(): number {
-    return this.lastUpdateTimestamp;
+  get lastTimestamp(): number {
+    return this.lastRequestTimestamp;
   }
 
   canRequest(timestamp: number): boolean {
@@ -36,7 +36,7 @@ export class SlidingWindow implements RateLimiter {
 
     if (this.requestTimestamps.size < this.limit) {
       this.requestTimestamps.add(timestamp);
-      this.lastUpdateTimestamp = timestamp;
+      this.lastRequestTimestamp = timestamp;
       return true;
     }
     return false;

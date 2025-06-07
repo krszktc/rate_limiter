@@ -5,12 +5,14 @@ export class TokenBucket implements RateLimiter {
   private tokens: number;
   private refillInterval: number;
   private lastRefill: number;
+  private lastRequestsTimestamp: number;
 
   constructor(capacity: number, refillInterval: number, lastRefill?: number) {
     this.capacity = capacity;
     this.tokens = capacity;
     this.refillInterval = (refillInterval / capacity) * 1000;
     this.lastRefill = lastRefill ?? Date.now();
+    this.lastRequestsTimestamp = Date.now();
   }
 
   private refill(timestamp: number) {
@@ -23,8 +25,8 @@ export class TokenBucket implements RateLimiter {
     }
   }
 
-  get lastUpdate(): number {
-    return this.lastRefill;
+  get lastTimestamp(): number {
+    return this.lastRequestsTimestamp;
   }
 
   get size(): number {
@@ -35,6 +37,7 @@ export class TokenBucket implements RateLimiter {
     this.refill(timestamp);
 
     if (this.tokens >= 1) {
+      this.lastRequestsTimestamp = timestamp;
       this.tokens -= 1;
       return true;
     }
