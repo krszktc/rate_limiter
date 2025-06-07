@@ -1,44 +1,64 @@
-#!/usr/bin/env ts-node
-import * as readline from 'readline';
+import { SlidingWindow } from "./sliding.window";
+import { TokenBucket } from "./token.bucket";
 
-interface RequestEvent {
+
+const LIMITER_TYPE_PARAM = '--type';
+const REQUESTS_LIMIT = 10;
+const TIME_WINDOW = 60 // seconds
+
+export interface RequestEvent {
   timestamp: string;
   clientId: string;
+}
+
+export enum LimiterType {
+  SLIDING_WINDOW = 'SlidingWindow',
+  TOKEN_BUCKET = 'TokenBucket',
 }
 
 export interface RateLimiter {
   canRequest(dateTime: string): boolean;
 }
 
-function processJsonLine(line: string) {
-  try {
-    const event: RequestEvent = JSON.parse(line);
+const limiterState = {
+  limiterType: LimiterType.SLIDING_WINDOW,
+  state: new Map<string, RateLimiter>(),
+};
 
-    if (!event.timestamp || !event.clientId) {
-      console.error(`Missing fields in input: ${line}`);
-      return;
-    }
-
-    const timestampMs = Date.parse(event.timestamp);
-    if (isNaN(timestampMs)) {
-      console.error(`Invalid timestamp format: ${event.timestamp}`);
-      return;
-    }
-
-    const clientId = event.clientId;
-
-
-  } catch (err: any) {
-    console.error(`Error parsing input: ${line}`);
-    console.error(err.message);
+function setLimiterByType(clientId: string) {
+  if (limiterState.limiterType === LimiterType.SLIDING_WINDOW) {
+    limiterState.state.set(
+      clientId,
+      new SlidingWindow(REQUESTS_LIMIT, TIME_WINDOW)
+    )
+  } else {
+    limiterState.state.set(
+      clientId,
+      new TokenBucket(REQUESTS_LIMIT, TIME_WINDOW)
+    )
   }
 }
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-  terminal: false,
-});
+export function canRequest(clientId: string, dateTime: string): boolean {
+  const clientLimiter = limiterState.state.get(clientId);
+  if (clientLimiter) {
+    return clientLimiter.canRequest(dateTime);
+  }
+  setLimiterByType(clientId);
+  return true;
+}
 
-rl.on('line', processJsonLine);
+export function setLimiterType(args: string[]) {
+  const params = args.slice(2);
+  const typeIndex = params.findIndex(arg => arg === LIMITER_TYPE_PARAM);
+
+  if (typeIndex >= 0 && params.length > typeIndex + 1) {
+    const typeValue = params[typeIndex + 1];
+    if (typeValue !== LimiterType.SLIDING_WINDOW && typeValue !== LimiterType.TOKEN_BUCKET) {
+      throw new Error(`Only ${LimiterType.SLIDING_WINDOW} or ${LimiterType.TOKEN_BUCKET} values accepted`);
+    }
+    limiterState.limiterType = typeValue;
+  }
+  console.log(`Rate Limiter selected: ${limiterState.limiterType}`);
+}
 
