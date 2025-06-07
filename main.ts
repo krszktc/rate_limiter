@@ -1,6 +1,6 @@
 #!/usr/bin/env ts-node
-import * as readline from 'readline';
-import { canRequest, RequestEvent, setLimiterType } from './rate.limiter';
+import { createInterface } from 'readline';
+import { canRequest, RequestEvent, setLimiterType } from './limiters/rate.limiter';
 
 
 function processJsonLine(line: string) {
@@ -11,22 +11,23 @@ function processJsonLine(line: string) {
     return;
   }
 
-  const timestampMs = Date.parse(event.timestamp);
-  if (isNaN(timestampMs)) {
+  const timestamp = Date.parse(event.timestamp);
+  if (isNaN(timestamp)) {
     console.error(`Invalid timestamp format: ${event.timestamp}`);
     return;
   }
 
-  const decision = canRequest(event.clientId, event.timestamp) ? 'ALLOW' : 'DENY';
+  // calling 'track=true' old client entries can be tracked and removed
+  const decision = canRequest(event.clientId, timestamp) ? 'ALLOW' : 'DENY';
   const output = JSON.stringify({ ...event, decision });
   console.log(output)
 }
 
 function main() {
   try {
-    setLimiterType(process.argv);
+    setLimiterType(process.argv.slice(2));
 
-    const rl = readline.createInterface({
+    const rl = createInterface({
       input: process.stdin,
       output: process.stdout,
       terminal: false,

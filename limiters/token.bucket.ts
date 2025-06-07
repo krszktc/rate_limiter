@@ -23,8 +23,15 @@ export class TokenBucket implements RateLimiter {
     }
   }
 
-  canRequest(dateTime: string): boolean {
-    const timestamp = new Date(dateTime).getTime();
+  get lastUpdate(): number {
+    return this.lastRefill;
+  }
+
+  get size(): number {
+    return this.tokens;
+  }
+
+  canRequest(timestamp: number): boolean {
     this.refill(timestamp);
 
     if (this.tokens >= 1) {
