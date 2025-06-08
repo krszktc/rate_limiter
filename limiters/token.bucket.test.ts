@@ -2,9 +2,7 @@ import { TokenBucket } from "./token.bucket";
 import { strictEqual } from 'assert';
 
 
-const initTime = new Date('2025-06-06T10:00:00Z').getTime();
-const tokenBucket = new TokenBucket(3, 60, initTime); // 1 token / 20s
-
+const tokenBucket = new TokenBucket(3, 60); // 1 token / 20s
 
 strictEqual(tokenBucket.canRequest(Date.parse('2025-06-06T10:00:00Z')), true); // 3 tokens
 strictEqual(tokenBucket.canRequest(Date.parse('2025-06-06T10:00:05Z')), true); // 2 tokens
