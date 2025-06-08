@@ -1,2 +1,2 @@
-#!/usr/bin/sh
+#!/usr/bin/env bash
 ts-node file.writer.ts

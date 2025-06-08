@@ -4,40 +4,38 @@ import { canRequest, RequestEvent, setLimiterType } from './limiters/rate.limite
 
 
 function processJsonLine(line: string) {
-  const event: RequestEvent = JSON.parse(line);
-
-  if (!event.timestamp || !event.clientId) {
-    console.error(`Missing fields in input: ${line}`);
-    return;
-  }
-
-  const timestamp = Date.parse(event.timestamp);
-  if (isNaN(timestamp)) {
-    console.error(`Invalid timestamp format: ${event.timestamp}`);
-    return;
-  }
-
-  // calling 'track=true' old client entries can be tracked and removed
-  const decision = canRequest(event.clientId, timestamp) ? 'ALLOW' : 'DENY';
-  const output = JSON.stringify({ ...event, decision });
-  console.log(output)
-}
-
-function main() {
   try {
-    setLimiterType(process.argv.slice(2));
+    const event: RequestEvent = JSON.parse(line);
 
-    const rl = createInterface({
-      input: process.stdin,
-      output: process.stdout,
-      terminal: false,
-    });
+    if (!event.timestamp || !event.clientId) {
+      console.error(`Missing fields in input: ${line}`);
+      return;
+    }
 
-    rl.on('line', processJsonLine);
+    const timestamp = Date.parse(event.timestamp);
+    if (isNaN(timestamp)) {
+      console.error(`Invalid timestamp format: ${event.timestamp}`);
+      return;
+    }
 
+    // calling 'track=true' old client entries can be tracked and removed
+    const decision = canRequest(event.clientId, timestamp) ? 'ALLOW' : 'DENY';
+    const output = JSON.stringify({ ...event, decision });
+    console.log(output)
   } catch (err: any) {
     console.error(err.message);
   }
+}
+
+function main() {
+  setLimiterType(process.argv.slice(2));
+
+  const rl = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: false,
+  });
+  rl.on('line', processJsonLine);
 }
 
 main();
