@@ -70,5 +70,5 @@ The fille called `testfile.txt` is default source of requests read and parse. If
 other file remember to adjust names in `file.reader.ts` and `run_rate_limiter.sh` script.
 
 * **memory cleaner**: 
-Memory cleaner is disabled by default. To enable it run function `/canRequest()` in `rate.limiter.ts` with last parameter `true`.
-Tests scenarios in `rate.limiter.test.ts` cover scenario with memory cleaner enabled. 
+Memory cleaner is disabled by default. To enable it run function `canRequest()` in `rate.limiter.ts` with last parameter `true`.
+Tests case in `rate.limiter.test.ts` cover with memory cleaner enabled. 
