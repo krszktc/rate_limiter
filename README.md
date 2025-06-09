@@ -50,7 +50,7 @@ To increase generation speed or number of client ids adjust configurable variabl
 
 * **main service**: The entry point of the service is saved in `main.ts` file. To run it in "listener mode" call `./run_rate_limiter.sh`.
 
-Sliding Window is the algorithm run by default. To run sliding rate limiter with Token Bucket call
+Sliding Window is the algorithm run by default. To run rate limiter with Token Bucket call
 ```sh
 tail -f testfile.txt | ts-node main.ts --type TokenBucket
 ```
