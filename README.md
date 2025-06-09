@@ -3,7 +3,7 @@ CMD rate limiter tool working base of Sliding Window and Token Bucket algorithm 
 
 ## 1. Introduction
 In the given example it's hard to select best algorithm to limit incoming request in require window of time. It's because production-ready variants like
-Token Bucket are not intended to work with required granularity. From the other had Sliding Window guarantee high precision for window shifting but memory footprint 
+Token Bucket are not intended to work with required granularity. From the other hand Sliding Window guarantee high precision for window shifting but memory footprint 
 could be very big. So we have non-production approach which work in tests or production-ready which not satisfied the tests. Decision? Let's use both.
 
 Why those and not other algorithms? 
@@ -50,7 +50,7 @@ To increase generation speed or number of client ids adjust configurable variabl
 
 * **main service**: The entry point of the service is saved in `main.ts` file. To run it in "listener mode" call `./run_rate_limiter.sh`.
 
-Sliding Window is the algorithm run by default. To run rate limiter with Token Bucket call
+Sliding Window is the default algorithm. To run rate limiter with Token Bucket call `main.ts` with `--type TokenBucket`. `--type SlidingWindow` works too.
 ```sh
 tail -f testfile.txt | ts-node main.ts --type TokenBucket
 ```
